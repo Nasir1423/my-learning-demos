@@ -11,7 +11,7 @@
 
 1. 克隆仓库：
 ```bash
-git clone https://github.com/[your-username]/my-learning-demos.git
+git clone https://github.com/Nasir1423/my-learning-demos.git
 ```
 
 2. 直接在浏览器中打开 `index.html` 访问演示导航页面
