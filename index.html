@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习示例集合</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a1a1a;
+            margin: 0;
+            font-size: 2em;
+        }
+        .subtitle {
+            color: #666;
+            margin-top: 10px;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 10px;
+        }
+        .demo-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .demo-card .preview {
+            height: 160px;
+            background-color: #e3f2fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: #1976d2;
+        }
+        .demo-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .demo-title {
+            font-size: 1.2em;
+            color: #1a1a1a;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+        }
+        .demo-description {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin: 0 0 15px 0;
+            flex-grow: 1;
+        }
+        .demo-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #2196f3;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .demo-link:hover {
+            background-color: #1976d2;
+        }
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>学习示例集合</h1>
+            <p class="subtitle">交互式学习各种概念和技术的演示集合</p>
+        </header>
+
+        <div class="demo-grid">
+            <!-- 召回率与精确率演示 -->
+            <div class="demo-card">
+                <div class="preview">📊</div>
+                <div class="demo-content">
+                    <h2 class="demo-title">召回率与精确率演示</h2>
+                    <div>
+                        <span class="tag">机器学习</span>
+                        <span class="tag">交互式</span>
+                    </div>
+                    <p class="demo-description">
+                        通过垃圾邮件过滤的场景，直观体验和理解召回率（Recall）与精确率（Precision）这两个重要的评估指标。
+                    </p>
+                    <a href="recal-precision-demo.html" class="demo-link">查看演示</a>
+                </div>
+            </div>
+
+            <!-- 示例卡片模板（后续添加新demo时可以复制这个模板）
+            <div class="demo-card">
+                <div class="preview">🔍</div>
+                <div class="demo-content">
+                    <h2 class="demo-title">示例标题</h2>
+                    <div>
+                        <span class="tag">标签1</span>
+                        <span class="tag">标签2</span>
+                    </div>
+                    <p class="demo-description">
+                        示例描述文本
+                    </p>
+                    <a href="#" class="demo-link">查看演示</a>
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+</body>
+</html> 

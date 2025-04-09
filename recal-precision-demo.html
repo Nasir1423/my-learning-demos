@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>召回率与精确率小游戏</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .game-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin: 0 0 15px 0;
+            color: #1a1a1a;
+        }
+        p {
+            font-size: 0.95em;
+            margin: 8px 0;
+            color: #444;
+            line-height: 1.4;
+        }
+        .game-area {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .item {
+            box-sizing: border-box;
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: white;
+        }
+        .item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .item.target {
+            background-color: #ffd700;
+            border-color: #ffc107;
+        }
+        .item.selected {
+            background-color: #4caf50;
+            border-color: #43a047;
+            color: white;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .metric-box {
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #e3f2fd;
+            font-size: 0.95em;
+            border: 1px solid #bbdefb;
+        }
+        .metric-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.1em;
+            color: #1976d2;
+        }
+        .explanation {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #fff3e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            border: 1px solid #ffe0b2;
+        }
+        .explanation h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.1em;
+            color: #f57c00;
+        }
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            flex: 1;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background-color: #1976d2;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(33,150,243,0.3);
+        }
+        button.reset {
+            background-color: #ff5252;
+        }
+        button.reset:hover {
+            background-color: #f44336;
+            box-shadow: 0 2px 8px rgba(244,67,54,0.3);
+        }
+        #recall, #precision {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2196f3;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>召回率与精确率小游戏</h1>
+        <p>游戏说明：假设你是一个垃圾邮件过滤器。黄色方块代表真实的垃圾邮件，你需要通过点击方块来标记你认为是垃圾邮件的内容。</p>
+        
+        <div class="game-area" id="gameArea"></div>
+        
+        <div class="buttons">
+            <button onclick="checkResults()">检查结果</button>
+            <button onclick="initializeGame()" class="reset">重新开始</button>
+        </div>
+        
+        <div class="metrics">
+            <div class="metric-box">
+                <h3>召回率 (Recall)</h3>
+                <p>找到的真实垃圾邮件 / 所有真实垃圾邮件</p>
+                <div id="recall">0%</div>
+            </div>
+            <div class="metric-box">
+                <h3>精确率 (Precision)</h3>
+                <p>正确标记的垃圾邮件 / 所有标记的邮件</p>
+                <div id="precision">0%</div>
+            </div>
+        </div>
+
+        <div class="explanation">
+            <h3>实际生活影响：</h3>
+            <p>• 高召回率但低精确率：可能会过度拦截正常邮件，影响正常通信</p>
+            <p>• 高精确率但低召回率：可能会漏掉一些垃圾邮件，用户需要手动处理更多垃圾邮件</p>
+            <p>• 理想情况：在保持高精确率的同时，尽可能提高召回率</p>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            targets: [],
+            selected: new Set()
+        };
+
+        function initializeGame() {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = '';
+            gameState.targets = [];
+            gameState.selected.clear();
+            
+            document.getElementById('recall').textContent = '0%';
+            document.getElementById('precision').textContent = '0%';
+
+            // 随机生成5个目标（真实垃圾邮件）
+            while (gameState.targets.length < 5) {
+                const num = Math.floor(Math.random() * 25);
+                if (!gameState.targets.includes(num)) {
+                    gameState.targets.push(num);
+                }
+            }
+
+            // 创建25个方块
+            for (let i = 0; i < 25; i++) {
+                const item = document.createElement('div');
+                item.className = 'item';
+                if (gameState.targets.includes(i)) {
+                    item.classList.add('target');
+                }
+                item.onclick = () => toggleSelection(i, item);
+                gameArea.appendChild(item);
+            }
+        }
+
+        function toggleSelection(index, element) {
+            if (gameState.selected.has(index)) {
+                gameState.selected.delete(index);
+                element.classList.remove('selected');
+            } else {
+                gameState.selected.add(index);
+                element.classList.add('selected');
+            }
+        }
+
+        function checkResults() {
+            const truePositives = gameState.targets.filter(t => gameState.selected.has(t)).length;
+            const falsePositives = Array.from(gameState.selected).filter(s => !gameState.targets.includes(s)).length;
+            
+            const recall = (truePositives / gameState.targets.length) * 100;
+            const precision = truePositives / (truePositives + falsePositives) * 100 || 0;
+
+            document.getElementById('recall').textContent = `${recall.toFixed(1)}%`;
+            document.getElementById('precision').textContent = `${precision.toFixed(1)}%`;
+        }
+
+        // 初始化游戏
+        initializeGame();
+    </script>
+</body>
+</html>
